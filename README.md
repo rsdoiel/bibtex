@@ -12,3 +12,12 @@ A quick and dirty plain text to Bibtex converter
   + Perl script includes self test that maybe helpful 
 + Example web pages with publication list
     + [Publications dealing with optical spectroscopy of minerals](http://minerals.gps.caltech.edu/mineralogy/Publications/CV_spectra.html)
+
+## About BibTex
+
++ [bibtex.org](http://www.bibtex.org/)
+    + [format](http://www.bibtex.org/Format/)
+    + [usage](http://www.bibtex.org/Using/)
++ [JabRef](http://www.jabref.org/) - an open source bibliography reference manager. 
+    + The native file format used by JabRef is BibTeX, the standard LaTeX bibliography format. 
+
