@@ -6,7 +6,7 @@
 
 A quick and dirty plain text to Bibtex converter
 
-## Prior art and references
+## Prior art
 
 + [makebib.perl](http://www.snowelm.com/~t/doc/tips/makebib.perl) - Converts plain text through a series regexp rules into Bibtex
   + Perl script includes self test that maybe helpful 
@@ -26,4 +26,5 @@ A quick and dirty plain text to Bibtex converter
         + [License](https://www.zotero.org/support/licensing) 
         + [Source Code](https://www.zotero.org/support/dev/source_code)
             + [Developer docs](https://www.zotero.org/support/dev/client_coding)
++ [MIT's Libguides for citation services](http://libguides.mit.edu/references) 
 
