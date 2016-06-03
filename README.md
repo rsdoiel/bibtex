@@ -18,6 +18,9 @@ A quick and dirty plain text to Bibtex converter
 + [bibtex.org](http://www.bibtex.org/)
     + [format](http://www.bibtex.org/Format/)
     + [usage](http://www.bibtex.org/Using/)
-+ [JabRef](http://www.jabref.org/) - an open source bibliography reference manager. 
-    + The native file format used by JabRef is BibTeX, the standard LaTeX bibliography format. 
++ Citation Tools
+    + [JabRef](http://www.jabref.org/) - an open source bibliography reference manager. 
+        + The native file format used by JabRef is BibTeX, the standard LaTeX bibliography format. 
+    + [Zotero](https://www.zotero.org/)
+        + Comercial service with API
 
