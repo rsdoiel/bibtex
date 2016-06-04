@@ -36,9 +36,23 @@
 package mkbib
 
 import (
+	"fmt"
+	"io/ioutil"
+	"path"
 	"testing"
 )
 
 func TestBasic(t *testing.T) {
-	t.Errorf("TestBasic() not implemented.")
+	fname := path.Join("testdata", "sample1.txt")
+	src, err := ioutil.ReadFile(fname)
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	bibSrc, err := Parse(src)
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	fmt.Printf("DEBUG bibSrc: %s\n", bibSrc)
 }
