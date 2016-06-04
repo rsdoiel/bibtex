@@ -22,13 +22,14 @@ A quick and dirty BibTeX package. Includes a simple plain text BibTeX parser.
 + [bibtex.org](http://www.bibtex.org/)
     + [format](http://www.bibtex.org/Format/)
     + [usage](http://www.bibtex.org/Using/)
-+ Open Source Citation Tools
-    + [JabRef](http://www.jabref.org/) - an open source bibliography reference manager. 
-        + The native file format used by JabRef is BibTeX, the standard LaTeX bibliography format. 
-    + [Zotero](https://www.zotero.org/)
-        + Provides a hosted solution
-        + [License](https://www.zotero.org/support/licensing) 
-        + [Source Code](https://www.zotero.org/support/dev/source_code)
-            + [Developer docs](https://www.zotero.org/support/dev/client_coding)
-+ [MIT's Libguides for citation services](http://libguides.mit.edu/references) 
+
+## Open Source Citation Tools
+
++ [JabRef](http://www.jabref.org/) - an open source bibliography reference manager. 
+    + The native file format used by JabRef is BibTeX, the standard LaTeX bibliography format. 
++ [Zotero](https://www.zotero.org/)
+    + Provides a hosted solution
+    + [License](https://www.zotero.org/support/licensing) 
+    + [Source Code](https://www.zotero.org/support/dev/source_code)
+        + [Developer docs](https://www.zotero.org/support/dev/client_coding)
 
