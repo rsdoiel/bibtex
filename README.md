@@ -2,9 +2,9 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 
-# mkbib
+# bibtex
 
-A quick and dirty plain text to Bibtex converter
+A quick and dirty BibTeX package. Includes a simple plain text BibTeX parser.
 
 ## Prior art
 
@@ -13,8 +13,12 @@ A quick and dirty plain text to Bibtex converter
 + Example web pages with publication list
     + [Publications dealing with optical spectroscopy of minerals](http://minerals.gps.caltech.edu/mineralogy/Publications/CV_spectra.html)
 
-## About BibTex
+## About BibTeX
 
++ [Wikipedia page on BibTeX](https://en.m.wikipedia.org/wiki/BibTeX) 
+    + includes good description of currently used fields
++ [Bibliographies with BibTeX](https://getpocket.com/a/read/98701243)
+    + article explaining practical usage
 + [bibtex.org](http://www.bibtex.org/)
     + [format](http://www.bibtex.org/Format/)
     + [usage](http://www.bibtex.org/Using/)
