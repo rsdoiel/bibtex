@@ -1,5 +1,5 @@
 //
-// Package mkbib is a quick and dirty plain text parser for generating
+// Package bibtex is a quick and dirty plain text parser for generating
 // a Bibtex citation
 //
 // @author R. S. Doiel, <rsdoiel@gmail.com>
@@ -33,7 +33,7 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-package mkbib
+package bibtex
 
 import (
 	"bytes"
