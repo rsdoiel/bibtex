@@ -43,7 +43,7 @@ import (
 	"path"
 
 	// This package
-	"github.com/rsdoiel/mkbib"
+	"github.com/rsdoiel/bibtex"
 )
 
 var (
@@ -75,12 +75,12 @@ func main() {
 			fmt.Printf("    -%s  (defaults to %s) %s\n", f.Name, f.DefValue, f.Usage)
 		})
 
-		fmt.Printf("\n\n Version: %s\n", mkbib.Version)
+		fmt.Printf("\n\n Version: %s\n", bibtex.Version)
 		os.Exit(0)
 	}
 
 	if showVersion == true {
-		fmt.Printf(" Version: %s\n", mkbib.Version)
+		fmt.Printf(" Version: %s\n", bibtex.Version)
 		os.Exit(0)
 	}
 
@@ -142,6 +142,6 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
-	src, err := mkbib.Parse(src)
+	src, err := bibtex.Parse(src)
 	fmt.Fprintf(out, "%s", src)
 }
