@@ -42,7 +42,7 @@ import (
 	"testing"
 )
 
-func TestBasic(t *testing.T) {
+func TestPlainTextParse(t *testing.T) {
 	fname := path.Join("testdata", "sample1.txt")
 	src, err := ioutil.ReadFile(fname)
 	if err != nil {
@@ -53,6 +53,27 @@ func TestBasic(t *testing.T) {
 	if err != nil {
 		t.Errorf("%s", err)
 		t.FailNow()
+	}
+	if bibSrc == nil {
+		t.Errorf("No BibTeX rendered")
+	}
+	fmt.Printf("DEBUG bibSrc: %s\n", bibSrc)
+}
+
+func TestBibTeXParse(t *testing.T) {
+	fname := path.Join("testdata", "sample2.txt")
+	src, err := ioutil.ReadFile(fname)
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	bibSrc, err := Parse(src)
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	if bibSrc == nil {
+		t.Errorf("No BibTeX rendered")
 	}
 	fmt.Printf("DEBUG bibSrc: %s\n", bibSrc)
 }

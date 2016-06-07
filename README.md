@@ -4,12 +4,22 @@
 
 # bibtex
 
-A quick and dirty BibTeX package. Includes a simple plain text BibTeX parser.
+A quick and dirty BibTeX package. Includes a simple plain text to BibTeX parser.
 
 ## Prior art
 
-+ [makebib.perl](http://www.snowelm.com/~t/doc/tips/makebib.perl) - Converts plain text through a series regexp rules into Bibtex
++ [makebib.perl](http://www.snowelm.com/~t/doc/tips/makebib.perl) - Converts plain text through a series regexp rules into BibTeX
   + Perl script includes self test that maybe helpful 
++ [pybtex](https://bitbucket.org/pybtex-devs/pybtex/src/1819074df33a?at=master) - Python BibTeX processor
++ [peer2](https://github.com/njwilson23/peer2) - Golang port of a Python tool called peer, it can do basic BibTeX format parsing
++ [r59-lex.go](https://talks.golang.org/2011/lex/r59-lex.go) - Golang, simple lexer example using goroutines
+    + [meling/biblexer](https://github.com/meling/biblexer) - a Golang BibTeX lexer based on Rob Pike's r59-lex.go
++ [nickng/bibtex](https://github.com/nickng/bibtex) - Golang, BibTeX parser package
++ [tmc/bibtex](https://github.com/tmc/bibtex) - Golang, BibTeX parser package
++ [sotetsuk/gobibtext](https://github.com/sotetsuk/gobibtex) - Golang, a BibTeX parser implementing the Decode, Encode function approach
+
+## Use case input examples
+
 + Example web pages with publication list
     + [Publications dealing with optical spectroscopy of minerals](http://minerals.gps.caltech.edu/mineralogy/Publications/CV_spectra.html)
 
