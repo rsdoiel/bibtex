@@ -39,6 +39,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"strings"
+
+	// My packages
+	"github.com/rsdoiel/tok"
 )
 
 // Version of mkbib library
