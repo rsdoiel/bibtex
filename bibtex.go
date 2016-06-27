@@ -74,16 +74,26 @@ type Title string
 type Type string
 type Volume string
 type Year string
+type CitationKey string
+
+// Generic Entries
+type Entry struct {
+	XMLName xml.Name          `json:"-"`
+	Type    string            `xml:"type" json:"type"`
+	Key     string            `xml:"citation-key,omitempty" json:"citation-key,omitempty"`
+	Fields  map[string]string `xml:"fields" json:"fields"`
+}
 
 // Entry types
 type Article struct {
 	// Required fields: author, title, journal, year, volume
-	XMLName xml.Name `json:"-"`
-	Author  *Author  `xml:"author" json:"author"`
-	Title   *Title   `xml:"title" json:"title"`
-	Journal *Journal `xml:"journal" json:"journal"`
-	Year    *Year    `xml:"year", json:"year"`
-	Volume  *Volume  `xml:"volume" json:"volume"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"`
+	Title       *Title       `xml:"title" json:"title"`
+	Journal     *Journal     `xml:"journal" json:"journal"`
+	Year        *Year        `xml:"year", json:"year"`
+	Volume      *Volume      `xml:"volume" json:"volume"`
 
 	// Optional fields: number, pages, month, note, key
 	Number *Number `xml:"number,omitempty" json:"number,omitempty"`
@@ -95,12 +105,13 @@ type Article struct {
 
 type Book struct {
 	// Required fields: author/editor, title, publisher, year
-	XMLName   xml.Name   `json:"-"`
-	Author    *Author    `xml:"author" json:"author"` // You need at least one Author or Editor, can also have both
-	Editor    *Editor    `xml:"editor" json:"editor"`
-	Title     *Title     `xml:"title" json:"title"`
-	Publisher *Publisher `xml:"publisher" json:"publisher"`
-	Year      *Year      `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"` // You need at least one Author or Editor, can also have both
+	Editor      *Editor      `xml:"editor" json:"editor"`
+	Title       *Title       `xml:"title" json:"title"`
+	Publisher   *Publisher   `xml:"publisher" json:"publisher"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: volume/number, series, address, edition, month, note, key
 	Volume  *Volume  `xml:"volume,omitempty" json:"volume,omitempty"`
@@ -115,8 +126,9 @@ type Book struct {
 
 type Booklet struct {
 	// Required fields: title
-	XMLName xml.Name `json:"-"`
-	Title   *Title   `xml:"title" json:"title"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Title       *Title       `xml:"title" json:"title"`
 
 	// Optional fields: author, howpublished, address, month, year, note, key
 	Author       *Author       `xml:"author,omitempty" json:"author,omitempty"`
@@ -130,14 +142,15 @@ type Booklet struct {
 
 type InBook struct {
 	// Reuqired fields: author/editor, title, chapter/pages, publisher, year
-	XMLName   xml.Name   `json:"-"`
-	Author    *Author    `xml:"author" json:"author"` // You need at least one Author or Editor, can also have both
-	Editor    *Editor    `xml:"editor" json:"editor"`
-	Title     *Title     `xml:"title" json:"title"`
-	Chapter   *Chapter   `xml:"chapter" json:"chapter"` // You need at least Chapter or Pages, can also have both
-	Pages     *Pages     `xml:"pages" json:"pages"`
-	Publisher *Publisher `xml:"publisher" json:"publisher"`
-	Year      *Year      `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"` // You need at least one Author or Editor, can also have both
+	Editor      *Editor      `xml:"editor" json:"editor"`
+	Title       *Title       `xml:"title" json:"title"`
+	Chapter     *Chapter     `xml:"chapter" json:"chapter"` // You need at least Chapter or Pages, can also have both
+	Pages       *Pages       `xml:"pages" json:"pages"`
+	Publisher   *Publisher   `xml:"publisher" json:"publisher"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: volume/number, series, type, address, edition, month, note, key
 	Volume  *Volume  `xml:"volume,omitempty" json:"volume,omitempty"` // You may have Volune, Number or both
@@ -153,12 +166,13 @@ type InBook struct {
 
 type InCollection struct {
 	// Reuqired fields: author, title, booktitle, publisher, year
-	XMLName   xml.Name   `json:"-"`
-	Author    *Author    `xml:"author" json:"author"`
-	Title     *Title     `xml:"title" json:"title"`
-	BookTitle *BookTitle `xml:"booktitle" json:"booktitle"`
-	Publisher *Publisher `xml:"publisher" json:"publisher"`
-	Year      *Year      `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"`
+	Title       *Title       `xml:"title" json:"title"`
+	BookTitle   *BookTitle   `xml:"booktitle" json:"booktitle"`
+	Publisher   *Publisher   `xml:"publisher" json:"publisher"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: editor, volume/number, series, type, chapter, pages, address, edition, month, note, key
 	Editor  *Editor  `xml:"editor,omitempty" json:"editor,omitempty"`
@@ -177,11 +191,12 @@ type InCollection struct {
 
 type InProceedings struct {
 	// Required fields: author, title, booktitle, year
-	XMLName   xml.Name   `json:"-"`
-	Author    *Author    `xml:"author" json:"author"`
-	Title     *Title     `xml:"title" json:"title"`
-	BookTitle *BookTitle `xml:"booktitle" json:"booktitle"`
-	Year      *Year      `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"`
+	Title       *Title       `xml:"title" json:"title"`
+	BookTitle   *BookTitle   `xml:"booktitle" json:"booktitle"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: editor, volume/number, series, pages, address, month, organization, publisher, note, key
 	Editor       *Editor       `xml:"editor,omitempty" json:"editor,omitempty"`
@@ -201,8 +216,9 @@ type Conference InProceedings
 
 type Manual struct {
 	// Required fields: title
-	XMLName xml.Name `json:"-"`
-	Title   *Title   `xml:"title" json:"title"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Title       *Title       `xml:"title" json:"title"`
 
 	// Optional fields: author, organization, address, edition, month, year, note, key
 	Author       *Author       `xml:"author,omitempty" json:"author,omitempty"`
@@ -217,11 +233,12 @@ type Manual struct {
 
 type MastersThesis struct {
 	// Required fields: author, title, school, year
-	XMLName xml.Name `json:"-"`
-	Author  *Author  `xml:"author" json:"author"`
-	Title   *Title   `xml:"title" json:"title"`
-	School  *School  `xml:"school" json:"school"`
-	Year    *Year    `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"`
+	Title       *Title       `xml:"title" json:"title"`
+	School      *School      `xml:"school" json:"school"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: type, address, month, note, key
 	Type    *Type    `xml:"type,omitempty" json:"type,omitempty"`
@@ -233,7 +250,8 @@ type MastersThesis struct {
 
 type Misc struct {
 	// Required fields: none
-	XMLName xml.Name `json:"-"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
 
 	// Optional fields: author, title, howpublished, month, year, note, key
 	Author       *Author       `xml:"author,omitempty" json:"author,omitempty"`
@@ -247,11 +265,12 @@ type Misc struct {
 
 type PhDThesis struct {
 	// Required fields: author, title, school, year
-	XMLName xml.Name `json:"-"`
-	Author  *Author  `xml:"author" json:"author"`
-	Title   *Title   `xml:"title" json:"title"`
-	School  *School  `xml:"school" json:"school"`
-	Year    *Year    `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"`
+	Title       *Title       `xml:"title" json:"title"`
+	School      *School      `xml:"school" json:"school"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: type, address, month, note, key
 	Type    *Type    `xml:"type,omitempty" json:"type,omitempty"`
@@ -263,9 +282,10 @@ type PhDThesis struct {
 
 type Proceedings struct {
 	// Required fields: title, year
-	XMLName xml.Name `json:"-"`
-	Title   *Title   `xml:"title" json:"title"`
-	Year    *Year    `xml:"year" json:"year"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Title       *Title       `xml:"title" json:"title"`
+	Year        *Year        `xml:"year" json:"year"`
 
 	// Optional fields: editor, volume/number, series, address, month, publisher, organization, note, key
 	Editor       *Editor       `xml:"editor" json:"editor"`
@@ -283,6 +303,7 @@ type Proceedings struct {
 type TechReport struct {
 	// Required fields: author, title, institution, year
 	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
 	Author      *Author      `xml:"author" json:"author"`
 	Title       *Title       `xml:"title" json:"title"`
 	Institution *Institution `xml:"institution" json:"institution"`
@@ -299,10 +320,11 @@ type TechReport struct {
 
 type Unpublished struct {
 	// Required fields: author, title, note
-	XMLName xml.Name `json:"-"`
-	Author  *Author  `xml:"author" json:"author"`
-	Title   *Title   `xml:"title" json:"title"`
-	Note    *Note    `xml:"note" json:"note"`
+	XMLName     xml.Name     `json:"-"`
+	CitationKey *CitationKey `xml:"key", json:"key"`
+	Author      *Author      `xml:"author" json:"author"`
+	Title       *Title       `xml:"title" json:"title"`
+	Note        *Note        `xml:"note" json:"note"`
 
 	// Optional fields: month, year, key
 	// month, year, key
@@ -316,6 +338,7 @@ func (a *Article) String() string {
 	var (
 		kv []string
 	)
+	kv = append(kv, fmt.Sprintf("%s", a.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", a.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", a.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "journal", a.Journal))
@@ -354,6 +377,7 @@ func (b *Book) String() string {
 	if b.Editor != nil {
 		kv = append(kv, fmt.Sprintf("%s = %q", "editor", b.Editor))
 	}
+	kv = append(kv, fmt.Sprintf("%s", b.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", b.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "publisher", b.Publisher))
 	kv = append(kv, fmt.Sprintf("%s = %q", "year", b.Year))
@@ -392,6 +416,7 @@ func (bl *Booklet) String() string {
 	)
 
 	// Required fields: Title
+	kv = append(kv, fmt.Sprintf("%s", bl.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", bl.Title))
 	// Optional fields: author, howpublished, address, month, year, note, key
 	if bl.Author != nil {
@@ -425,6 +450,7 @@ func (ib *InBook) String() string {
 		kv []string
 	)
 	// Required fields: author/editor, title, chapter/pages, publisher, year
+	kv = append(kv, fmt.Sprintf("%s", ib.CitationKey))
 	if ib.Author != nil {
 		kv = append(kv, fmt.Sprintf("%s = %q", "author", ib.Author))
 	}
@@ -479,6 +505,7 @@ func (ic *InCollection) String() string {
 		kv []string
 	)
 	// Required fields: author, title, booktitle, publisher, yeic.
+	kv = append(kv, fmt.Sprintf("%s", ic.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", ic.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", ic.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "booktitle", ic.BookTitle))
@@ -532,6 +559,7 @@ func (ip *InProceedings) String() string {
 		kv []string
 	)
 	// Required fields: author, title, booktitle, year
+	kv = append(kv, fmt.Sprintf("%s", ip.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", ip.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", ip.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "booktitle", ip.BookTitle))
@@ -581,6 +609,7 @@ func (m *Manual) String() string {
 		kv []string
 	)
 	// Required fields: title
+	kv = append(kv, fmt.Sprintf("%s", m.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", m.Title))
 	// Optional fields: author, organization, address, edition, month, year, note, key
 	if m.Author != nil {
@@ -617,6 +646,7 @@ func (mt *MastersThesis) String() string {
 		kv []string
 	)
 	// Required fields: author, title, school, year
+	kv = append(kv, fmt.Sprintf("%s", mt.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", mt.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", mt.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "school", mt.School))
@@ -651,6 +681,7 @@ func (misc *Misc) String() string {
 		kv []string
 	)
 	// Required fields: none
+	kv = append(kv, fmt.Sprintf("%s", misc.CitationKey))
 	// Optional fields: author, title, howpublished, month, year, note, key
 	if misc.Author != nil {
 		kv = append(kv, fmt.Sprintf("%s = %q", "author", misc.Author))
@@ -683,6 +714,7 @@ func (phd *PhDThesis) String() string {
 		kv []string
 	)
 	// Required fields: author, title, school, year
+	kv = append(kv, fmt.Sprintf("%s", phd.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", phd.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", phd.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "school", phd.School))
@@ -714,6 +746,7 @@ func (p *Proceedings) String() string {
 		kv []string
 	)
 	// Required fields: title, year
+	kv = append(kv, fmt.Sprintf("%s", p.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", p.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "year", p.Year))
 
@@ -758,6 +791,7 @@ func (t *TechReport) String() string {
 		kv []string
 	)
 	// Required fields: author, title, institution, year
+	kv = append(kv, fmt.Sprintf("%s", t.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", t.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", t.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "institution", t.Institution))
@@ -793,6 +827,7 @@ func (u *Unpublished) String() string {
 	)
 
 	// Required fields: author, title, note
+	kv = append(kv, fmt.Sprintf("%s", u.CitationKey))
 	kv = append(kv, fmt.Sprintf("%s = %q", "author", u.Author))
 	kv = append(kv, fmt.Sprintf("%s = %q", "title", u.Title))
 	kv = append(kv, fmt.Sprintf("%s = %q", "note", u.Note))
@@ -816,11 +851,19 @@ func (u *Unpublished) String() string {
 // Parser related structures
 //
 
-// Parse plain text BibTeX entries into appropriate structures
-func Parse(buf []byte) ([]byte, error) {
-	// words := bytes.Split(bytes.Replace(buf, []byte("\n"), []byte(" <EOL> "), -1), []byte(" "))
-	// for i, word := range words {
-	// 	fmt.Printf("DEBUG i: %d, word: %q\n", i, word)
-	// }
+// Parse a BibTeX file into appropriate structures
+func Parse(buf []byte) ([]Entry, error) {
+	var (
+		i     int
+		token *tok.Token
+	)
+	for {
+		if len(buf) == 0 {
+			break
+		}
+		i++
+		token, buf = tok.Tok2(buf, tok.Bib)
+		fmt.Printf("DEBUG i: %d, token: %s\n", i, token)
+	}
 	return nil, nil
 }
