@@ -185,8 +185,7 @@ type InProceedings struct {
 	Organization string `xml:"organization,omitempty" json:"organization,omitempty"`
 	Publisher    string `xml:"publisher,omitempty" json:"publisher,omitempty"`
 	Note         string `xml:"note,omitempty" json:"note,omitempty"`
-	//FIXME: Make sure that key and citation key are not the name.
-	Key string `xml:"key,omitempty" json:"key,omitempty"`
+	Key          string `xml:"key,omitempty" json:"key,omitempty"`
 }
 
 type Conference InProceedings
@@ -310,7 +309,28 @@ type Unpublished struct {
 	Key   string `xml:"key,omitempty" json:"key,omitempty"`
 }
 
-// String conversions render in BibText format
+// Render a single BibTeX element
+func (element *Element) String() string {
+	val := element.Value
+	switch v := val.(type) {
+	case Article:
+		return fmt.Sprintf("%s", v)
+	}
+	return fmt.Sprintf("%+v", element)
+}
+
+// Render a list of BibTeX elements
+func (elements Elements) String() string {
+	var (
+		out []string
+	)
+	for _, element := range elements {
+		out = append(out, fmt.Sprintf("%s", element))
+	}
+	return strings.Join(out, "\n")
+}
+
+// String conversions render in BibTeX format
 func (a *Article) String() string {
 	var (
 		kv []string
@@ -850,20 +870,6 @@ func (u *Unpublished) String() string {
 	return fmt.Sprintf(`@unpublished{ %s }`, data)
 }
 
-func (elements Elements) String() string {
-	var out []string
-
-	for _, element := range elements {
-		switch element.Type {
-		default:
-			// FIXME: Cast the element.Value to appropriate type and render with String()
-			out = append(out, fmt.Sprintf("DEBUG render type %s +v", element.Type, element.Value))
-		}
-	}
-
-	return strings.Join(out, "\n")
-}
-
 //
 // Parser related structures
 //
@@ -882,6 +888,7 @@ func advanceTo(targetType string, lineNo int, buf []byte) (int, *tok.Token, []by
 			// Keep track of what line we're on from source buffer
 			lineNo = lineNo + bytes.Count(token.Value, []byte("\n"))
 		}
+		fmt.Printf("DEBUG %d token: %s\n", lineNo, token)
 		if token.Type == targetType {
 			return lineNo, token, buf, nil
 		}
@@ -901,6 +908,7 @@ func skipSpaces(lineNo int, buf []byte) (int, *tok.Token, []byte) {
 			// Keep track of what line we're on from source buffer
 			lineNo = lineNo + bytes.Count(token.Value, []byte("\n"))
 		} else {
+			fmt.Printf("DEBUG %d token: %s\n", lineNo, token)
 			return lineNo, token, buf
 		}
 	}
@@ -912,19 +920,25 @@ func parseValue(lineNo int, buf []byte) (int, []byte, []byte, error) {
 		i          int
 		token      *tok.Token
 		val        []byte
+		err        error
 	)
-	//FIXME: Need to handle case where a numeric value is not quoted
 	lineNo, token, buf = skipSpaces(lineNo, buf)
-	quoteValue = token.Value
-	for i = 0; i < len(buf); i++ {
-		//FIXME: Need to handle escaping the quoteValue...
-		if bytes.Equal(buf[i:i+1], quoteValue) {
-			break
+	if token.Type == "AlphaNumeric" {
+		lineNo, _, buf, err = advanceTo("Comma", lineNo, buf)
+		fmt.Printf("DEBUG %d, val: %s\n", lineNo, token.Value)
+		return lineNo, token.Value, buf, err
+	} else {
+		quoteValue = token.Value
+		for i = 0; i < len(buf); i++ {
+			//FIXME: Need to handle escaping the quoteValue...
+			if bytes.Equal(buf[i:i+1], quoteValue) {
+				break
+			}
 		}
 	}
 	// Copy out the value from buffer and advance
-	val, buf = buf[0:i], buf[i-1:]
-	fmt.Printf("DEBUG %d quoteValue: %s, val: %s, buf: %s\n", lineNo, quoteValue, val, buf)
+	val, buf = buf[0:i], buf[i:]
+	fmt.Printf("DEBUG %d quoteValue: %s, val: %s\n", lineNo, quoteValue, val)
 	return lineNo, val, buf, nil
 }
 
@@ -936,7 +950,9 @@ func parseKeysAndAttributes(lineNo int, buf []byte) (int, string, map[string]str
 		val         []byte
 		token       *tok.Token
 		err         error
+		mappedValue bool
 	)
+	citationKey = ""
 	attributes = make(map[string]string)
 	for {
 		if len(buf) == 0 {
@@ -947,21 +963,23 @@ func parseKeysAndAttributes(lineNo int, buf []byte) (int, string, map[string]str
 			ky = fmt.Sprintf("%s", token.Value)
 		}
 		lineNo, token, buf = skipSpaces(lineNo, buf)
-		fmt.Printf("DEBUG %d token: %s\n", lineNo, token)
 		if token != nil {
 			switch token.Type {
 			case tok.EqualSign:
+				mappedValue = true
 				// FIXME: Cut until a trailing comma is encountered.
 				lineNo, val, buf, err = parseValue(lineNo, buf)
 				if err != nil {
 					return lineNo, citationKey, attributes, buf, err
 				}
-				fmt.Printf("DEBUG ky/val: %s -> %s\n", ky, val)
 				if val != nil {
 					attributes[ky] = fmt.Sprintf("%s", val)
 				}
 			case "Comma":
-				citationKey = ky
+				if mappedValue == false {
+					citationKey = ky
+				}
+				mappedValue = false
 			case tok.CloseCurlyBracket:
 				break
 			}
@@ -1007,7 +1025,6 @@ func mkArticle(citationKey string, attributes map[string]string) *Article {
 	if val, ok := attributes["key"]; ok == true {
 		article.Key = val
 	}
-
 	fmt.Printf("DEBUG mkArticle() -> %s\n", article)
 	return article
 }
@@ -1016,6 +1033,10 @@ func mkElement(elementType string, citationKey string, attributes map[string]str
 	element := new(Element)
 	switch strings.ToLower(elementType) {
 	//FIXME: Need to populate Element
+	case "comment":
+		// We ignore comments
+		element.Type = "comment"
+		element.Value = ""
 	case "article":
 		element.Type = "article"
 		element.Value = mkArticle(citationKey, attributes)
@@ -1051,18 +1072,11 @@ func Parse(buf []byte) ([]*Element, error) {
 			if err != nil {
 				return elements, err
 			}
-			fmt.Printf("DEBUG element type: %s -> %s\n", token, buf)
 			elementType := fmt.Sprintf("%s", token.Value)
 			lineNo, token, buf, err = advanceTo(tok.OpenCurlyBracket, lineNo, buf)
 			if err != nil {
 				return elements, err
 			}
-			/*
-				lineNo, token, buf = skipSpaces(lineNo, buf)
-				if token.Type != tok.OpenCurlyBracket {
-					return elements, fmt.Errorf("line %d, expected an open curly bracket", lineNo)
-				}
-			*/
 
 			lineNo, citationKey, attributes, buf, err = parseKeysAndAttributes(lineNo, buf)
 			if err != nil {

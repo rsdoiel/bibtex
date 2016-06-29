@@ -36,29 +36,10 @@
 package bibtex
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path"
 	"testing"
 )
-
-func TestPlainTextParse(t *testing.T) {
-	fname := path.Join("testdata", "sample1.txt")
-	src, err := ioutil.ReadFile(fname)
-	if err != nil {
-		t.Errorf("%s", err)
-		t.FailNow()
-	}
-	bibSrc, err := Parse(src)
-	if err != nil {
-		t.Errorf("%s", err)
-		t.FailNow()
-	}
-	if bibSrc == nil {
-		t.Errorf("No BibTeX rendered")
-	}
-	fmt.Printf("DEBUG bibSrc: %s\n", bibSrc)
-}
 
 func TestParse(t *testing.T) {
 	fname := path.Join("testdata", "sample2.txt")
@@ -72,8 +53,28 @@ func TestParse(t *testing.T) {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}
-	if len(elements) == 0 {
-		t.Errorf("No BibTeX rendered")
+	if len(elements) != 1 {
+		t.Errorf("Expected a single Article element")
+		t.FailNow()
 	}
-	fmt.Printf("DEBUG elements: %v\n", elements)
+	if elements[0].Type != "article" {
+		t.Errorf("Expected a single Article element: %s\n", elements)
+		t.FailNow()
+	}
+
+	fname = path.Join("testdata", "sample3.txt")
+	src, err = ioutil.ReadFile(fname)
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	elements, err = Parse(src)
+	if err != nil {
+		t.Errorf("%s", err)
+		t.FailNow()
+	}
+	if len(elements) != 2 {
+		t.Errorf("Expected two Article elements: %s\n", elements)
+		t.FailNow()
+	}
 }

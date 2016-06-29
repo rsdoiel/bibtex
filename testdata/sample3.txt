@@ -1,3 +1,7 @@
+@comment {
+    "This is some sort of comment"
+}
+
 @article{
     a3,
     author = "R. S. Doiel, Mark Doiel",
@@ -6,3 +10,5 @@
     year = 2016,
     volume = "3",
 }
+
+@article {author="Fred Zip",note="some notes, then some more notes",norweignwood,year=2026,}
