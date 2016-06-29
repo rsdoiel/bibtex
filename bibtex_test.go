@@ -60,20 +60,20 @@ func TestPlainTextParse(t *testing.T) {
 	fmt.Printf("DEBUG bibSrc: %s\n", bibSrc)
 }
 
-func TestBibTeXParse(t *testing.T) {
+func TestParse(t *testing.T) {
 	fname := path.Join("testdata", "sample2.txt")
 	src, err := ioutil.ReadFile(fname)
 	if err != nil {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}
-	bibSrc, err := Parse(src)
+	elements, err := Parse(src)
 	if err != nil {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}
-	if bibSrc == nil {
+	if len(elements) == 0 {
 		t.Errorf("No BibTeX rendered")
 	}
-	fmt.Printf("DEBUG bibSrc: %s\n", bibSrc)
+	fmt.Printf("DEBUG elements: %v\n", elements)
 }
