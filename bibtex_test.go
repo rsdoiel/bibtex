@@ -36,13 +36,14 @@
 package bibtex
 
 import (
+	"fmt"
 	"io/ioutil"
 	"path"
 	"testing"
 )
 
 func TestParse(t *testing.T) {
-	fname := path.Join("testdata", "sample2.txt")
+	fname := path.Join("testdata", "sample1.bib")
 	src, err := ioutil.ReadFile(fname)
 	if err != nil {
 		t.Errorf("%s", err)
@@ -53,28 +54,19 @@ func TestParse(t *testing.T) {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}
-	if len(elements) != 1 {
-		t.Errorf("Expected a single Article element")
+	if len(elements) != 4 {
+		t.Errorf("Expected 4 elements: %s\n", elements)
 		t.FailNow()
 	}
-	if elements[0].Type != "article" {
-		t.Errorf("Expected a single Article element: %s\n", elements)
-		t.FailNow()
-	}
-
-	fname = path.Join("testdata", "sample3.txt")
-	src, err = ioutil.ReadFile(fname)
-	if err != nil {
-		t.Errorf("%s", err)
-		t.FailNow()
-	}
-	elements, err = Parse(src)
-	if err != nil {
-		t.Errorf("%s", err)
-		t.FailNow()
-	}
-	if len(elements) != 2 {
-		t.Errorf("Expected two Article elements: %s\n", elements)
-		t.FailNow()
+	expectedTypes := []string{"comment", "misc", "article", "article"}
+	for i, element := range elements {
+		fmt.Printf("DEBUG %d element: %s\n", i, element)
+		if len(expectedTypes) > i {
+			t.Errorf("expectedTypes array shorter than required: %d\n", i)
+			t.FailNow()
+		}
+		if element.Type != expectedTypes[i] {
+			t.Errorf("expected %s, found %s", expectedTypes[i], element.Type)
+		}
 	}
 }
