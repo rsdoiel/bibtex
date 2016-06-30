@@ -284,6 +284,10 @@ func parseKeysAndTags(lineNo int, buf []byte) (int, []string, map[string]string,
 		err        error
 		isKeyValue bool
 	)
+	// FIXME: I think I am over thinking this.  Strings, variables and identifier are terminated by either
+	// a comma or closing curly bracket if outside a "quote". Quotes can be either double quote or open/close
+	// curly braces pairs.  The other special character is # which can concatenate quoted strings. If I move through the buffer I just need to keep
+	// track of the quote state.  In additional to key/tag terminator an equal sign All other characters outside the
 	tags = make(map[string]string)
 	// Skip leading spaces
 	lineNo, token, buf = skipSpaces(lineNo, buf)
