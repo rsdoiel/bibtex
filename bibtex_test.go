@@ -36,7 +36,6 @@
 package bibtex
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path"
 	"strings"
@@ -91,19 +90,35 @@ func TestParse(t *testing.T) {
 		t.Errorf("%s", err)
 		t.FailNow()
 	}
-	if len(elements) != 4 {
-		t.Errorf("Expected 4 elements: %s\n", elements)
+	expectedTypes := []string{"comment", "string", "misc", "article", "article"}
+	if len(elements) != len(expectedTypes) {
+		t.Errorf("Expected 5 elements: %s\n", elements)
 		t.FailNow()
 	}
-	expectedTypes := []string{"comment", "misc", "article", "article"}
 	for i, element := range elements {
-		fmt.Printf("DEBUG %d element: %s\n", i, element)
-		if len(expectedTypes) > i {
+		if i > len(expectedTypes) {
 			t.Errorf("expectedTypes array shorter than required: %d\n", i)
 			t.FailNow()
 		}
 		if element.Type != expectedTypes[i] {
 			t.Errorf("expected %s, found %s", expectedTypes[i], element.Type)
 		}
+		if element.Type == "comment" {
+			if len(element.Keys) != 3 {
+				t.Errorf("Expected 3 keys in comment entry: %s", element)
+			}
+			if strings.HasPrefix(element.Keys[0], "\"") == true {
+				t.Errorf("Expected first element to be a key: [%s]", element.Keys[0])
+			}
+			if strings.HasPrefix(element.Keys[1], "\"") == false {
+				t.Errorf("Expected second elements to be quoted strings: [%s] [%s]", element.Keys[1], element)
+			}
+			if strings.HasPrefix(element.Keys[2], "\"") == false {
+				t.Errorf("Expected third element to be quoted strings: [%s] [%s]", element.Keys[2], element)
+			}
+		} else if len(element.Tags) == 0 {
+			t.Errorf("Expected tags in element: [%s]", element)
+		}
+
 	}
 }

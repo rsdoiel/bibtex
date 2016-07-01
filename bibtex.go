@@ -167,13 +167,13 @@ func Bib(token *tok.Token, buf []byte) (*tok.Token, []byte) {
 		newTok, newBuf := tok.Tok(buf)
 		if newTok.Type != tok.OpenCurlyBracket {
 			token.Type = "BibElement"
-			token.Value = append(token.Value, newTok.Value[0])
+			token.Value = append(token.Value[:], newTok.Value[:]...)
 			token, buf = Bib(token, newBuf)
 		}
 	case token.Type == tok.Space:
 		newTok, newBuf := tok.Tok(buf)
 		if newTok.Type == tok.Space {
-			token.Value = append(token.Value, newTok.Value[0])
+			token.Value = append(token.Value[:], newTok.Value[:]...)
 			token, buf = Bib(token, newBuf)
 		}
 	case token.Type == tok.Letter || token.Type == tok.Numeral || token.Type == "AlphaNumeric":
@@ -182,7 +182,7 @@ func Bib(token *tok.Token, buf []byte) (*tok.Token, []byte) {
 		// Get the next Token
 		newTok, newBuf := tok.Tok(buf)
 		if newTok.Type == tok.Letter || newTok.Type == tok.Numeral {
-			token.Value = append(token.Value, newTok.Value[0])
+			token.Value = append(token.Value[:], newTok.Value[:]...)
 			token, buf = Bib(token, newBuf)
 		}
 	default:
@@ -201,224 +201,115 @@ func Bib(token *tok.Token, buf []byte) (*tok.Token, []byte) {
 	return token, buf
 }
 
-func advanceTo(targetType string, lineNo int, buf []byte) (int, *tok.Token, []byte, error) {
+func mkElement(elementType string, buf []byte) (*Element, error) {
 	var (
-		token *tok.Token
+		key     []byte
+		val     []byte
+		between []byte
+		token   *tok.Token
+		err     error
+		keys    []string
+		tags    map[string]string
 	)
-	startLine := lineNo
-	for {
-		if len(buf) == 0 {
-			return lineNo, token, buf, fmt.Errorf("%d expected %s after %d", lineNo, targetType, startLine)
-		}
-		token, buf = tok.Tok2(buf, Bib)
-		if token.Type == tok.Space {
-			// Keep track of what line we're on from source buffer
-			lineNo = lineNo + bytes.Count(token.Value, []byte("\n"))
-		}
-		//fmt.Printf("DEBUG %d token: %s\n", lineNo, token)
-		if token.Type == targetType {
-			return lineNo, token, buf, nil
-		}
-	}
-}
 
-func skipSpaces(lineNo int, buf []byte) (int, *tok.Token, []byte) {
-	var (
-		token *tok.Token
-	)
-	for {
-		if len(buf) == 0 {
-			return lineNo, token, buf
-		}
-		token, buf = tok.Tok2(buf, Bib)
-		if token.Type == tok.Space {
-			// Keep track of what line we're on from source buffer
-			lineNo = lineNo + bytes.Count(token.Value, []byte("\n"))
-		} else {
-			//fmt.Printf("DEBUG %d token: %s\n", lineNo, token)
-			return lineNo, token, buf
-		}
-	}
-}
-
-func parseTagValue(lineNo int, buf []byte) (int, []byte, []byte, error) {
-	var (
-		quoteValue []byte
-		i          int
-		token      *tok.Token
-		val        []byte
-		err        error
-	)
-	lineNo, token, buf = skipSpaces(lineNo, buf)
-	if token.Type == "AlphaNumeric" {
-		lineNo, _, buf, err = advanceTo("Comma", lineNo, buf)
-		//fmt.Printf("DEBUG %d, val: %s\n", lineNo, token.Value)
-		return lineNo, token.Value, buf, err
-	} else {
-		quoteValue = token.Value
-		for i = 0; i < len(buf); i++ {
-			//FIXME: Need to handle concatenation # when quotaVale is single/double quote
-			//FIXME: Need to handle escaping the quoteValue...
-			if bytes.Equal(buf[i:i+1], quoteValue) {
-				break
-			}
-		}
-	}
-	// Copy out the value from buffer and advance
-	val, buf = buf[0:i], buf[i:]
-	//fmt.Printf("DEBUG %d quoteValue: %s, val: %s\n", lineNo, quoteValue, val)
-	return lineNo, val, buf, nil
-}
-
-func consumeBibString(lineNo int, quoteType string, buf []byte, val []byte) (int, *tok.Token, []byte, []byte) {
-	var (
-		token      *tok.Token
-		quoteCount int
-	)
-	// When consumeBibString has happened we're already inside a quote
-	if quoteType == tok.DoubleQuote || quoteType == tok.OpenCurlyBracket {
-		quoteCount++
-	}
-
-	for {
-		if len(buf) == 0 {
-			break
-		}
-		token, buf = tok.Tok2(buf, Bib)
-		switch {
-		case quoteType == tok.OpenCurlyBracket && token.Type == tok.OpenCurlyBracket:
-			quoteCount++
-		case quoteType == tok.OpenCurlyBracket && token.Type == tok.CloseCurlyBracket:
-			quoteCount--
-			// NOTE: This handles the case of a missing trailing comma in a tag or key entry
-			if quoteCount < 1 {
-				break
-			}
-		case quoteType != tok.OpenCurlyBracket && token.Type == tok.DoubleQuote:
-			// NOTE: If we're not using curlies to quote a string then we may have concatenated strings
-			// so want to toggle our quote count.
-			if quoteCount == 1 {
-				quoteCount = 0
-			} else {
-				quoteCount = 1
-			}
-		case quoteCount == 0 && token.Type == "Comma":
-			// NOTE: tag/key ends normally
-			break
-		case quoteCount == 0 && token.Type == tok.CloseCurlyBracket:
-			// NOTE: tag/key is missing trailing comma in a tag or key entry
-			break
-		case quoteCount == 0 && token.Type == tok.EqualSign:
-			// NOTE: Handle the case where we have a key for a tag.
-			break
-		}
-		val = append(val[:], token.Value[:]...)
-	}
-	return lineNo, token, buf, val
-}
-
-func parseKeysAndTags(lineNo int, buf []byte) (int, []string, map[string]string, []byte, error) {
-	var (
-		keys       []string
-		tags       map[string]string
-		ky         string
-		val        []byte
-		token      *tok.Token
-		err        error
-		isKeyValue bool
-	)
-	// FIXME: I think I am over thinking this.  Strings, variables and identifier are terminated by either
-	// a comma or closing curly bracket if outside a "quote". Quotes can be either double quote or open/close
-	// curly braces pairs.  The other special character is # which can concatenate quoted strings. If I move through the buffer I just need to keep
-	// track of the quote state.  In additional to key/tag terminator an equal sign All other characters outside the
+	element := new(Element)
+	element.Type = elementType
 	tags = make(map[string]string)
-	// Skip leading spaces
-	lineNo, token, buf = skipSpaces(lineNo, buf)
+
 	for {
 		if len(buf) == 0 {
 			break
 		}
-		// Now we need to evaluate the entry
-		// Do we have a key, a tag or comment string?
-		isKeyValue = true
+		_, token, buf = tok.Skip2(tok.Space, buf, Bib)
 		switch {
-		case token.Type == "AlphaNumeric":
-			ky = fmt.Sprintf("%s", token.Value)
-			lineNo, token, buf = skipSpaces(lineNo, buf)
-		default:
-			// We have some sort of ID, string or key
-			lineNo, token, buf, val = consumeBibString(lineNo, token.Type, buf, val)
-			ky = fmt.Sprintf("%q", val)
-		}
-
-		switch token.Type {
-		case tok.EqualSign:
-			isKeyValue = false
-			lineNo, token, buf = skipSpaces(lineNo, buf)
-			lineNo, token, buf, val = consumeBibString(lineNo, token.Type, buf, val)
+		case token.Type == tok.OpenCurlyBracket:
+			buf = tok.Backup(token, buf)
+			between, buf, err = tok.Between([]byte("{"), []byte("}"), []byte(""), buf)
 			if err != nil {
-				return lineNo, keys, tags, buf, err
+				return element, err
 			}
-			if val != nil {
-				tags[ky] = fmt.Sprintf("%s", val)
+			val = append(val, []byte("{")[0])
+			val = append(val[:], between[:]...)
+			val = append(val, []byte("}")[0])
+		case token.Type == tok.DoubleQuote:
+			buf = tok.Backup(token, buf)
+			between, buf, err = tok.Between([]byte("\""), []byte("\""), []byte(""), buf)
+			if err != nil {
+				return element, err
 			}
-		case "Comma":
-			if isKeyValue == true {
-				keys = append(keys, ky)
+			val = append(val, []byte("\"")[0])
+			val = append(val[:], between[:]...)
+			val = append(val, []byte("\"")[0])
+		case token.Type == tok.EqualSign:
+			key = val
+			val = nil
+		case token.Type == "Comma" || len(buf) == 0:
+			if len(key) > 0 {
+				//make a map entry
+				tags[string(key)] = string(val)
+				key = nil
+			} else {
+				// append to element keys
+				keys = append(keys, string(val))
 			}
+			val = nil
+		case token.Type == tok.Punctuation && bytes.Equal(token.Value, []byte("#")):
+			val = append(val[:], []byte(" # ")[:]...)
 		default:
-			break
+			val = append(val[:], token.Value[:]...)
 		}
 	}
-	fmt.Printf("DEBUG ParseKeysAndTags() ended with Curly! %d, %d\n", lineNo, len(buf))
-	return lineNo, keys, tags, buf, nil
+	element.Keys = keys
+	element.Tags = tags
+	return element, nil
 }
 
 // Parse a BibTeX file into appropriate structures
 func Parse(buf []byte) ([]*Element, error) {
 	var (
-		lineNo   int
-		token    *tok.Token
-		elements []*Element
-		err      error
-		keys     []string
-		tags     map[string]string
+		lineNo      int
+		token       *tok.Token
+		elements    []*Element
+		err         error
+		skipped     []byte
+		entrySource []byte
+		LF          = []byte("\n")
 	)
 	lineNo = 1
 	for {
 		if len(buf) == 0 {
 			break
 		}
-		fmt.Printf("DEBUG finding next AtSign: %d\n", len(buf))
-		lineNo, token, buf, err = advanceTo(tok.AtSign, lineNo, buf)
-		if err != nil && len(elements) == 0 {
-			return elements, err
-		}
-		fmt.Printf("DEBUG buf len: %d\n", len(buf))
+		skipped, token, buf = tok.Skip2(tok.Space, buf, Bib)
+		lineNo = lineNo + bytes.Count(skipped, LF)
 		if token.Type == tok.AtSign {
-			lineNo, token, buf, err = advanceTo("AlphaNumeric", lineNo, buf)
-			if err != nil {
-				return elements, fmt.Errorf("line %d, %s", lineNo, err)
+			// We may have a entry key
+			token, buf = tok.Tok2(buf, Bib)
+			if token.Type == "AlphaNumeric" {
+				elementType := token.Value[:]
+				skipped, token, buf = tok.Skip2(tok.Space, buf, Bib)
+				lineNo = lineNo + bytes.Count(skipped, LF)
+				if token.Type == tok.OpenCurlyBracket {
+					// Ok it looks like we have a Bib entry now.
+					buf = tok.Backup(token, buf)
+					entrySource, buf, err = tok.Between([]byte("{"), []byte("}"), []byte(""), buf)
+					if err != nil {
+						return elements, fmt.Errorf("Problem parsing entry at %d", lineNo)
+					}
+					// OK, we have an entry, let's process it.
+					element, err := mkElement(string(elementType), entrySource)
+					if err != nil {
+						return elements, fmt.Errorf("Error parsing element at %d, %s", lineNo, err)
+					}
+					lineNo = lineNo + bytes.Count(entrySource, LF)
+					// OK, we have an element, let's append to our array...
+					elements = append(elements, element)
+				}
 			}
-			elementType := fmt.Sprintf("%s", token.Value)
-			lineNo, token, buf, err = advanceTo(tok.OpenCurlyBracket, lineNo, buf)
-			if err != nil {
-				return elements, fmt.Errorf("line %d, %s", lineNo, err)
-			}
-			lineNo, keys, tags, buf, err = parseKeysAndTags(lineNo, buf)
-			if err != nil {
-				return elements, fmt.Errorf("line %d, %s", lineNo, err)
-			}
-			// Add element to the list
-			elements = append(elements, &Element{
-				Type: elementType,
-				Keys: keys,
-				Tags: tags,
-			})
-			fmt.Printf("DEBUG last element:\n%s\n", elements[len(elements)-1])
-			fmt.Printf("DEBUG elements:\n%s\n", elements)
 		}
-		fmt.Printf("DEBUG buf len: %d\n", len(buf))
+	}
+	if len(elements) == 0 {
+		err = fmt.Errorf("no elements found")
 	}
 	return elements, nil
 }
