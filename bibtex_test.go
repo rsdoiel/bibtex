@@ -39,9 +39,46 @@ import (
 	"fmt"
 	"io/ioutil"
 	"path"
+	"strings"
 	"testing"
+
+	// My packages
+	"github.com/rsdoiel/tok"
 )
 
+// TestBib tests the Bib tokenizer
+func TestBib(t *testing.T) {
+	fname1 := path.Join("testdata", "sample0.txt")
+	fname2 := path.Join("testdata", "expected0.txt")
+
+	src1, err := ioutil.ReadFile(fname1)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+	src2, err := ioutil.ReadFile(fname2)
+	if err != nil {
+		t.Error(err)
+		t.FailNow()
+	}
+
+	expected := strings.Split(strings.TrimSpace(string(src2)), "\n")
+	var (
+		token *tok.Token
+		i     int
+	)
+	for i, expectedType := range expected {
+		token, src1 = tok.Tok2(src1, Bib)
+		if strings.Compare(token.Type, strings.TrimSpace(expectedType)) != 0 {
+			t.Errorf("%d: %s != %s", i, token, expectedType)
+		}
+	}
+	if len(src1) != 0 {
+		t.Errorf("Expected to have len(src1) == 1, %d [%s]", i, src1)
+	}
+}
+
+// TestParse tests the parsing function
 func TestParse(t *testing.T) {
 	fname := path.Join("testdata", "sample1.bib")
 	src, err := ioutil.ReadFile(fname)

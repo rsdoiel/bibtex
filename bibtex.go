@@ -158,6 +158,49 @@ func (element *Element) String() string {
 // Parser related structures
 //
 
+// Bib is a niave BibTeX Tokenizer function
+// Note: there is an English bias in the AlphaNumeric check
+func Bib(token *tok.Token, buf []byte) (*tok.Token, []byte) {
+	switch {
+	case token.Type == tok.AtSign || token.Type == "BibElement":
+		// Get the next Token
+		newTok, newBuf := tok.Tok(buf)
+		if newTok.Type != tok.OpenCurlyBracket {
+			token.Type = "BibElement"
+			token.Value = append(token.Value, newTok.Value[0])
+			token, buf = Bib(token, newBuf)
+		}
+	case token.Type == tok.Space:
+		newTok, newBuf := tok.Tok(buf)
+		if newTok.Type == tok.Space {
+			token.Value = append(token.Value, newTok.Value[0])
+			token, buf = Bib(token, newBuf)
+		}
+	case token.Type == tok.Letter || token.Type == tok.Numeral || token.Type == "AlphaNumeric":
+		// Convert Letters and Numerals to AlphaNumeric Type.
+		token.Type = "AlphaNumeric"
+		// Get the next Token
+		newTok, newBuf := tok.Tok(buf)
+		if newTok.Type == tok.Letter || newTok.Type == tok.Numeral {
+			token.Value = append(token.Value, newTok.Value[0])
+			token, buf = Bib(token, newBuf)
+		}
+	default:
+		// Revaluate token for more specific token types.
+		token = tok.TokenFromMap(token, map[string][]byte{
+			tok.OpenCurlyBracket:  tok.OpenCurlyBrackets,
+			tok.CloseCurlyBracket: tok.CloseCurlyBrackets,
+			tok.AtSign:            tok.AtSignMark,
+			tok.EqualSign:         tok.EqualMark,
+			tok.DoubleQuote:       tok.DoubleQuoteMark,
+			tok.SingleQuote:       tok.SingleQuoteMark,
+			"Comma":               []byte(","),
+		})
+	}
+
+	return token, buf
+}
+
 func advanceTo(targetType string, lineNo int, buf []byte) (int, *tok.Token, []byte, error) {
 	var (
 		token *tok.Token
@@ -167,7 +210,7 @@ func advanceTo(targetType string, lineNo int, buf []byte) (int, *tok.Token, []by
 		if len(buf) == 0 {
 			return lineNo, token, buf, fmt.Errorf("%d expected %s after %d", lineNo, targetType, startLine)
 		}
-		token, buf = tok.Tok2(buf, tok.Bib)
+		token, buf = tok.Tok2(buf, Bib)
 		if token.Type == tok.Space {
 			// Keep track of what line we're on from source buffer
 			lineNo = lineNo + bytes.Count(token.Value, []byte("\n"))
@@ -187,7 +230,7 @@ func skipSpaces(lineNo int, buf []byte) (int, *tok.Token, []byte) {
 		if len(buf) == 0 {
 			return lineNo, token, buf
 		}
-		token, buf = tok.Tok2(buf, tok.Bib)
+		token, buf = tok.Tok2(buf, Bib)
 		if token.Type == tok.Space {
 			// Keep track of what line we're on from source buffer
 			lineNo = lineNo + bytes.Count(token.Value, []byte("\n"))
@@ -227,7 +270,7 @@ func parseTagValue(lineNo int, buf []byte) (int, []byte, []byte, error) {
 	return lineNo, val, buf, nil
 }
 
-func consumeBibString(quoteType string, val []byte, lineNo int, buf []byte) (int, []byte, *tok.Token, []byte) {
+func consumeBibString(lineNo int, quoteType string, buf []byte, val []byte) (int, *tok.Token, []byte, []byte) {
 	var (
 		token      *tok.Token
 		quoteCount int
@@ -241,14 +284,14 @@ func consumeBibString(quoteType string, val []byte, lineNo int, buf []byte) (int
 		if len(buf) == 0 {
 			break
 		}
-		token, buf = tok.Tok2(buf, tok.Bib)
+		token, buf = tok.Tok2(buf, Bib)
 		switch {
-		case quoteType == tok.OpenCurlyBracket && token.Type == tok.OpenQurlyBracket:
+		case quoteType == tok.OpenCurlyBracket && token.Type == tok.OpenCurlyBracket:
 			quoteCount++
-		case quoteType == tok.OpenCurlyBracket && token.Type == tok.CloseQurlyBracket:
+		case quoteType == tok.OpenCurlyBracket && token.Type == tok.CloseCurlyBracket:
 			quoteCount--
 			// NOTE: This handles the case of a missing trailing comma in a tag or key entry
-			if quoteQount < 1 {
+			if quoteCount < 1 {
 				break
 			}
 		case quoteType != tok.OpenCurlyBracket && token.Type == tok.DoubleQuote:
@@ -269,9 +312,9 @@ func consumeBibString(quoteType string, val []byte, lineNo int, buf []byte) (int
 			// NOTE: Handle the case where we have a key for a tag.
 			break
 		}
-		val = append(val, token.Value)
+		val = append(val[:], token.Value[:]...)
 	}
-	return lineNo, val, token, buf
+	return lineNo, token, buf, val
 }
 
 func parseKeysAndTags(lineNo int, buf []byte) (int, []string, map[string]string, []byte, error) {
@@ -304,7 +347,7 @@ func parseKeysAndTags(lineNo int, buf []byte) (int, []string, map[string]string,
 			lineNo, token, buf = skipSpaces(lineNo, buf)
 		default:
 			// We have some sort of ID, string or key
-			lineNo, val, token, buf = consumeBibString(tok.Type, token.Value, lineNo, buf)
+			lineNo, token, buf, val = consumeBibString(lineNo, token.Type, buf, val)
 			ky = fmt.Sprintf("%q", val)
 		}
 
@@ -312,7 +355,7 @@ func parseKeysAndTags(lineNo int, buf []byte) (int, []string, map[string]string,
 		case tok.EqualSign:
 			isKeyValue = false
 			lineNo, token, buf = skipSpaces(lineNo, buf)
-			lineNo, val, buf, err = consumeBibString(token.Type, lineNo, buf)
+			lineNo, token, buf, val = consumeBibString(lineNo, token.Type, buf, val)
 			if err != nil {
 				return lineNo, keys, tags, buf, err
 			}
