@@ -36,11 +36,14 @@ func main() {
 
 	if showHelp == true {
 		fmt.Printf(`
- USAGE: %s [OPTION] BIBFILE
+ USAGE: %s [OPTION] [BIBFILE] [OUTFILE]
+
+ Pretty prints BibTeX files and can filter output based
+ in entry type.
 
  OPTIONS:
 
-`)
+`, appname)
 
 		flag.VisitAll(func(f *flag.Flag) {
 			fmt.Printf("    -%s %s\n", f.Name, f.Usage)
