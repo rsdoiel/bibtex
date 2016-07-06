@@ -54,7 +54,7 @@ func main() {
 	}
 
 	if showVersion == true {
-		fmt.Printf("\n Version %s\n", bibtex.Version)
+		fmt.Printf(" Version %s\n", bibtex.Version)
 		os.Exit(0)
 	}
 
