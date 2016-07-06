@@ -47,7 +47,7 @@ import (
 
 const (
 	// Version of BibTeX package
-	Version = "v0.0.2"
+	Version = "v0.0.6"
 
 	// A template for printing an element
 	ElementTmplSrc = `

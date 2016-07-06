@@ -54,7 +54,7 @@ func main() {
 	}
 
 	if showVersion == true {
-		fmt.Printf("\n Version %s\n", bibtex.Version)
+		fmt.Printf(" Version %s\n", bibtex.Version)
 		os.Exit(0)
 	}
 
@@ -91,6 +91,7 @@ func main() {
  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
  `, appname)
+		os.Exit(0)
 	}
 
 	var (
