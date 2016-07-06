@@ -1,10 +1,48 @@
-[![Go Report Card](http://goreportcard.com/badge/rsdoiel/bibtex)](http://goreportcard.com/report/rsdoiel/bibtex)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Go Report Card](http://goreportcard.com/badge/rsdoiel/bibtex)](http://goreportcard.com/report/rsdoiel/bibtex)
 
 
 # bibtex
 
-A quick and dirty BibTeX package. Includes a simple plain text to BibTeX parser.
+A quick and dirty BibTeX package. Includes *bibfilter* which can parse and filter tag entries of a BibTeX file.
+
+## Usage
+
+```
+ USAGE: bibfilter [OPTION] BIBFILE
+
+ OPTIONS:
+
+    -exclude a comma separated list of tags to exclude
+    -h display help information
+    -include a comma separated list of tags to include
+    -l display license
+    -v display version information
+
+
+ Version v0.0.3
+```
+
+## Examples
+
+Output **my.bib** without any comment entries
+
+```
+    bibfilter -exlude=comment my.bib
+```
+
+Output **my.bib** only including articles
+
+```
+    bibfilter -include=article my.bib
+```
+
+Output **my.bib** only including articles and proceedings
+
+```
+    bibfilter -include=article,inproceedings my.bib
+```
+
 
 ## Prior art
 
