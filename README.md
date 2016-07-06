@@ -9,19 +9,18 @@ A quick and dirty BibTeX package. Includes *bibfilter* which can parse and filte
 ## Usage
 
 ```
- USAGE: bibfilter [OPTION] BIBFILE
-
- OPTIONS:
-
-    -exclude a comma separated list of tags to exclude
-    -h display help information
-    -include a comma separated list of tags to include
-    -l display license
-    -v display version information
-
-
- Version v0.0.3
+ bibfilter [OPTION] BIBFILE
 ```
+
+This command will output *BIBFILE* to the console applying the options specified.
+
+## Options
+
+ + -exclude a comma separated list of tags to exclude
+ + -include a comma separated list of tags to include
+ + -h display help information
+ + -l display license
+ + -v display version information
 
 ## Examples
 
