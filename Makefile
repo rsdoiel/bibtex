@@ -3,6 +3,7 @@
 #
 build:
 	go build -o bin/bibfilter cmds/bibfilter/bibfilter.go
+	./mk-webapp.sh
 
 install:
 	env GOBIN=$(HOME)/bin go install cmds/bibfilter/bibfilter.go
@@ -15,5 +16,6 @@ clean:
 	if [ -d dist ]; then rm -fR dist; fi
 
 release:
+	./mk-webapp.sh
 	./mk-release.sh
 

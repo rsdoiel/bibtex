@@ -46,7 +46,10 @@ import (
 
 const (
 	// Version of BibTeX package
-	Version = "v0.0.6"
+	Version = "v0.0.7"
+
+	// Default Include list of defined fields
+	DefaultInclude = "comment,string,article,book,booklet,inbook,incollection,inproceedings,conference,manual,masterthesis,misc,phdthesis,proceedings,techreport,unpublished"
 
 	// A template for printing an element
 	ElementTmplSrc = `
