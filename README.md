@@ -1,6 +1,7 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Go Report Card](http://goreportcard.com/badge/rsdoiel/bibtex)](http://goreportcard.com/report/rsdoiel/bibtex)
 
+This is not where active development is happening. See http://github.com/caltechlibrary/bibtex for active development.
 
 # bibtex
 
