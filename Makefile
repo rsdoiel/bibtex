@@ -17,12 +17,8 @@ test:
 clean:
 	if [ -d bin ]; then rm -fR bin; fi
 	if [ -d dist ]; then rm -fR dist; fi
-	if [ -f webapp/webapp.js ]; then rm -f webapp/webapp.js; fi
-	if [ -f webapp/webapp.js.map ]; then rm -f webapp/webapp.js.map; fi
-	if [ -f bibtex-binary-release.zip ]; then rm -f bibtex-binary-release.zip; fi
+	if [ -f index.html ]; then rm -f *.html; fi
 
 release:
-	./mk-webapp.sh
-	./mk-website.sh
 	./mk-release.sh
 
