@@ -4,7 +4,6 @@
 build:
 	go build -o bin/bibfilter cmds/bibfilter/bibfilter.go
 	go build -o bin/bibmerge cmds/bibmerge/bibmerge.go
-	./mk-webapp.sh
 	./mk-website.sh
 
 install:
