@@ -46,7 +46,7 @@ import (
 
 const (
 	// Version of BibTeX package
-	Version = "v0.0.7"
+	Version = "v0.0.9"
 
 	// Default Include list of defined fields
 	DefaultInclude = "comment,string,article,book,booklet,inbook,incollection,inproceedings,conference,manual,masterthesis,misc,phdthesis,proceedings,techreport,unpublished"

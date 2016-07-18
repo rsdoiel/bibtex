@@ -55,11 +55,6 @@ Output **my.bib** only including articles and proceedings
 + [tmc/bibtex](https://github.com/tmc/bibtex) - Golang, BibTeX parser package
 + [sotetsuk/gobibtext](https://github.com/sotetsuk/gobibtex) - Golang, a BibTeX parser implementing the Decode, Encode function approach
 
-## Use case input examples
-
-+ Example web pages with publication list
-    + [Publications dealing with optical spectroscopy of minerals](http://minerals.gps.caltech.edu/mineralogy/Publications/CV_spectra.html)
-
 ## About BibTeX
 
 + [Wikipedia page on BibTeX](https://en.m.wikipedia.org/wiki/BibTeX) 
