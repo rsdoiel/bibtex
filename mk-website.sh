@@ -29,4 +29,5 @@ softwareCheck
 echo "Generating website with shorthand"
 mkPage nav.md "Experimental prototype BibTeX tools" README.md index.html
 mkPage nav.md "Experimental prototype BibTeX tools" LICENSE license.html
+mkPage nav.md "Experimental prototype BibTeX tools" INSTALL.md installation.html
 
