@@ -1,6 +1,5 @@
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-[![Go Report Card](http://goreportcard.com/badge/rsdoiel/bibtex)](http://goreportcard.com/report/rsdoiel/bibtex)
 
+ This is not where active development is happening. See http://github.com/caltechlibrary/bibtex for active development.
 
 # bibtex
 
@@ -54,11 +53,6 @@ Output **my.bib** only including articles and proceedings
 + [nickng/bibtex](https://github.com/nickng/bibtex) - Golang, BibTeX parser package
 + [tmc/bibtex](https://github.com/tmc/bibtex) - Golang, BibTeX parser package
 + [sotetsuk/gobibtext](https://github.com/sotetsuk/gobibtex) - Golang, a BibTeX parser implementing the Decode, Encode function approach
-
-## Use case input examples
-
-+ Example web pages with publication list
-    + [Publications dealing with optical spectroscopy of minerals](http://minerals.gps.caltech.edu/mineralogy/Publications/CV_spectra.html)
 
 ## About BibTeX
 

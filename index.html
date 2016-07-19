@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><p>Experimental prototype BibTeX tools</p>
+</title>
+    <link href='https://fonts.googleapis.com/css?family=Noto+Sans:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href="css/style.css" rel="stylesheet" />
+<head>
+<body>
+    <header>
+        <h1><p>Experimental prototype BibTeX tools</p>
+</h1>
+    </header>
+    <section><p><a href="https://opensource.org/licenses/BSD-3-Clause"><img src="https://img.shields.io/badge/License-BSD%203--Clause-blue.svg" alt="License" /></a>
+<a href="http://goreportcard.com/report/rsdoiel/bibtex"><img src="http://goreportcard.com/badge/rsdoiel/bibtex" alt="Go Report Card" /></a></p>
+
+<h1>bibtex</h1>
+
+<p>A quick and dirty BibTeX package. Includes <em>bibfilter</em> which can parse and filter tag entries of a BibTeX file.</p>
+
+<h2>Usage</h2>
+
+<pre><code> bibfilter [OPTION] BIBFILE
+</code></pre>
+
+<p>This command will output <em>BIBFILE</em> to the console applying the options specified.</p>
+
+<h2>Options</h2>
+
+<ul>
+<li>-exclude a comma separated list of tags to exclude</li>
+<li>-include a comma separated list of tags to include</li>
+<li>-h display help information</li>
+<li>-l display license</li>
+<li>-v display version information</li>
+</ul>
+
+<h2>Examples</h2>
+
+<p>Output <strong>my.bib</strong> without any comment entries</p>
+
+<pre><code>    bibfilter -exlude=comment my.bib
+</code></pre>
+
+<p>Output <strong>my.bib</strong> only including articles</p>
+
+<pre><code>    bibfilter -include=article my.bib
+</code></pre>
+
+<p>Output <strong>my.bib</strong> only including articles and proceedings</p>
+
+<pre><code>    bibfilter -include=article,inproceedings my.bib
+</code></pre>
+
+<h2>Prior art</h2>
+
+<ul>
+<li><a href="http://www.snowelm.com/~t/doc/tips/makebib.perl">makebib.perl</a> - Converts plain text through a series regexp rules into BibTeX
+
+<ul>
+<li>Perl script includes self test that maybe helpful</li>
+</ul></li>
+<li><a href="https://bitbucket.org/pybtex-devs/pybtex/src/1819074df33a?at=master">pybtex</a> - Python BibTeX processor</li>
+<li><a href="https://github.com/njwilson23/peer2">peer2</a> - Golang port of a Python tool called peer, it can do basic BibTeX format parsing</li>
+<li><a href="https://talks.golang.org/2011/lex/r59-lex.go">r59-lex.go</a> - Golang, simple lexer example using goroutines
+
+<ul>
+<li><a href="https://github.com/meling/biblexer">meling/biblexer</a> - a Golang BibTeX lexer based on Rob Pike&rsquo;s r59-lex.go</li>
+</ul></li>
+<li><a href="https://github.com/nickng/bibtex">nickng/bibtex</a> - Golang, BibTeX parser package</li>
+<li><a href="https://github.com/tmc/bibtex">tmc/bibtex</a> - Golang, BibTeX parser package</li>
+<li><a href="https://github.com/sotetsuk/gobibtex">sotetsuk/gobibtext</a> - Golang, a BibTeX parser implementing the Decode, Encode function approach</li>
+</ul>
+
+<h2>About BibTeX</h2>
+
+<ul>
+<li><a href="https://en.m.wikipedia.org/wiki/BibTeX">Wikipedia page on BibTeX</a>
+
+<ul>
+<li>includes good description of currently used fields</li>
+</ul></li>
+<li><a href="https://getpocket.com/a/read/98701243">Bibliographies with BibTeX</a>
+
+<ul>
+<li>article explaining practical usage</li>
+</ul></li>
+<li><a href="http://www.bibtex.org/">bibtex.org</a>
+
+<ul>
+<li><a href="http://www.bibtex.org/Format/">format</a></li>
+<li><a href="http://www.bibtex.org/Using/">usage</a></li>
+</ul></li>
+</ul>
+
+<h2>Open Source Citation Tools</h2>
+
+<ul>
+<li><a href="http://www.jabref.org/">JabRef</a> - an open source bibliography reference manager.
+
+<ul>
+<li>The native file format used by JabRef is BibTeX, the standard LaTeX bibliography format.</li>
+</ul></li>
+<li><a href="https://www.zotero.org/">Zotero</a>
+
+<ul>
+<li>Provides a hosted solution</li>
+<li><a href="https://www.zotero.org/support/licensing">License</a></li>
+<li><a href="https://www.zotero.org/support/dev/source_code">Source Code</a>
+
+<ul>
+<li><a href="https://www.zotero.org/support/dev/client_coding">Developer docs</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+    <nav><ul>
+<li><a href="/">Home</a></li>
+<li><a href="./">bibtex</a></li>
+<li><a href="https://github.com/rsdoiel/bibtex">Source Code</a></li>
+<li><a href="./readme.html">README</a></li>
+<li><a href="./license.html">LICENSE</a></li>
+</ul>
+</nav>
+    <footer>
+    <p>copyright &copy; , R. S. Doiel, all rights reserved</p>
+
+    </footer>
+</body>
+</html>
