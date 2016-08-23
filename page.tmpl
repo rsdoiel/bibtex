@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{- .pageTitle -}}</title>
+    <link href="/css/site.css" rel="stylesheet" />
+<head>
+<body>
+    <header>
+        <h1>{{- .pageTitle -}}</h1>
+    </header>
+    <section>{{ .pageContent }}</section>
+    <nav>{{ .nav }}</nav>
+    <footer>
+    {{ .copyright }}
+    </footer>
+</body>
+</html>

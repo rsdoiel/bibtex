@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function softwareCheck() {
-    for CMD in shorthand; do
+    for CMD in $@; do
         APP=$(which $CMD)
         if [ "$APP" = "" ]; then
             echo "Skipping, missing $CMD"
@@ -16,18 +16,21 @@ function mkPage () {
     content="$3"
     html="$4"
 
-    echo "Rendering $html from $content and $nav"
-    shorthand \
-        -e "{{pageTitle}} :markdown: $pageTitle" \
-        -e "{{pageContent}} :import-markdown: $content" \
-        -e "{{copyright}} :markdown: copyright &copy; $YEAR, R. S. Doiel, all rights reserved" \
-        -e "{{nav}} :import-markdown: $nav" \
-        page.shorthand > $html
+    echo "Rendering $html"
+    mkpage \
+        "pageTitle=markdown:$pageTitle" \
+        "pageContent=$content" \
+        "copyright=text:copyright &copy; $YEAR, R. S. Doiel, all rights reserved" \
+        "nav=$nav" \
+        page.tmpl > $html
 }
 
-softwareCheck
-echo "Generating website with shorthand"
+echo "Checking software"
+softwareCheck mkpage
+echo "Generating index.html"
 mkPage nav.md "Experimental prototype BibTeX tools" README.md index.html
-mkPage nav.md "Experimental prototype BibTeX tools" LICENSE license.html
-mkPage nav.md "Experimental prototype BibTeX tools" INSTALL.md installation.html
+echo "Generating license.html"
+mkPage nav.md "Experimental prototype BibTeX tools" "markdown:$(cat LICENSE)" license.html
+echo "Generating install.html"
+mkPage nav.md "Experimental prototype BibTeX tools" INSTALL.md install.html
 

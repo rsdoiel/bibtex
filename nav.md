@@ -1,7 +1,6 @@
 
 + [Home](/)
-+ [bibtex](./)
++ [bibtex](index.html)
++ [LICENSE](license.html)
++ [Install](install.html)
 + [Source Code](https://github.com/rsdoiel/bibtex)
-+ [README](./readme.html)
-+ [LICENSE](./license.html)
-+ [Install](./installation.html)
