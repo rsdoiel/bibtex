@@ -4,7 +4,7 @@
 build:
 	go build -o bin/bibfilter cmds/bibfilter/bibfilter.go
 	go build -o bin/bibmerge cmds/bibmerge/bibmerge.go
-	./mk-website.sh
+	./mk-website.bash
 
 install:
 	env GOBIN=$(HOME)/bin go install cmds/bibfilter/bibfilter.go
@@ -19,5 +19,11 @@ clean:
 	if [ -f index.html ]; then rm -f *.html; fi
 
 release:
-	./mk-release.sh
+	./mk-release.bash
 
+website:
+	./mk-website.bash
+
+publish:
+	./mk-website.bash
+	./publish.bash
