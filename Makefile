@@ -28,7 +28,6 @@ save:
 clean:
 	if [ -d bin ]; then /bin/rm -fR bin; fi
 	if [ -d dist ]; then /bin/rm -fR dist; fi
-	if [ -f index.html ]; then /bin/rm -f *.html; fi
 	if [ -f $(PROJECT)-$(VERSION)-release.zip ]; then /bin/rm $(PROJECT)-$(VERSION)-release.zip; fi
 
 release:
